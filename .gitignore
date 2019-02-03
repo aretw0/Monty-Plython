@@ -27,6 +27,6 @@
 *.out
 *.app
 
-Release/**/*.*
-Debug/**/*.*
-bin/*.*
+Release/*
+Debug/*
+bin/*
