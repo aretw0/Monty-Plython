@@ -19,7 +19,7 @@ include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${LIB_DIR})
-include_directories(${SRC_DIR})
+# include_directories(${SRC_DIR})
 
 
 # Executável

@@ -18,6 +18,8 @@
 
 #include <GL/glut.h>
 #include <iostream>
+#include <math.h>
+
 #include "../lib/rply-1.1.4/rply.h"
 
 #define ANGLE_CHECK 25
@@ -75,6 +77,11 @@ GLfloat angle = 25, fAspect;
 // taxa de tamanho
 GLsizei rsize = 10;
 
+int currentX;			// Current X position of mouse
+int currentY;			// Current Y position of mouse
+float trackBallRotate[3] ;	// Instantiate the trackball
+int mState;			// Store Mouse State
+
 bool fs = true, plyReady = false;
 
 long nvertices, ntriangles;
@@ -100,6 +107,10 @@ void TeclasEspeciais(int key, int x, int y);
 // Função callback chamada para gerenciar eventos do teclado
 void GerenciaTeclado(unsigned char key, int x, int y);
 
+void quaternion(char ch,int angle);
+void dragRotation(int xPos, int yPos); 
+void mouseMotion (int x, int y) ;
+
 // Função callback chamada para gerenciar eventos do mouse
 void GerenciaMouse(int button, int state, int x, int y);
 
@@ -113,6 +124,7 @@ void Desenha(void);
 
 void StartArgs(int argc, char* argv[]);
 // Programa Principal 
+
 
 
 static int vertex_cb(p_ply_argument argument) {
@@ -161,6 +173,8 @@ int main(int argc, char** argv)
     glutDisplayFunc(Desenha);
     glutReshapeFunc(AlteraTamanhoJanela);   
     glutKeyboardFunc(GerenciaTeclado);
+    glutMouseFunc(GerenciaMouse);	
+    glutMotionFunc(mouseMotion);
     glutMainLoop();
 }
 
@@ -197,8 +211,20 @@ void StartArgs(int argc, char* argv[]) {
 		cout << "Argumento detectado: " << argv[1] << endl;
 		// fazer leitura de arquivo aqui
 
-        // p_ply ply = ply_open(argv[1], NULL, 0, NULL);
-        // if (!ply) return;
+        p_ply ply = ply_open(argv[1], NULL, 0, NULL);
+        if (!ply){
+            cout << "Falha na leitura!\nInforme corretamente o caminho para o arquivo: \n";
+            char * another;
+            cin >> another;
+            ply = ply_open(another, NULL, 0, NULL);
+            if (!ply) return;
+            if (!ply_read_header(ply)) return;
+        }
+        if (!ply_read_header(ply)) {
+            cout << "Falha na leitura dos cabecalhos!\n";
+            return;
+        }
+
         // if (!ply_read_header(ply)) return;
         // nvertices = ply_set_read_cb(ply, "vertex", "x", vertex_cb, NULL, 0);
         // ply_set_read_cb(ply, "vertex", "y", vertex_cb, NULL, 0);
@@ -209,13 +235,25 @@ void StartArgs(int argc, char* argv[]) {
         // ply_close(ply);
 		// plyReady = true;
     } else {
-		cout << "Argumento faltando!!!" << endl;
+		cout << "Argumento faltando!!!\nInforme corretamente o caminho para o arquivo: \n";
+        char * another;
+        cin >> another;
 		// exit(EXIT_FAILURE);
+        p_ply ply = ply_open(another, NULL, 0, NULL);
+        if (!ply){
+            cout << "Falha na leitura!\n";
+        }
+        if (!ply_read_header(ply)) {
+            cout << "Falha na leitura dos cabecalhos!\n";
+            return;
+        }
 	}
 }
 
 void doAnimate() 
 {
+    quaternion( 'x',trackBallRotate[0]) ;
+    quaternion( 'y',trackBallRotate[1]) ;
     glTranslatef(xT, yT, zT);
     // glRotatef(aR,1,1,1);
     glRotatef(aXR,1,0,0);
@@ -242,6 +280,257 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h)
     yMax = (h/40);
 
     glutPostRedisplay();
+}
+
+// Gerenciamento do menu com as opções de cores           
+void MenuCorLuz1(int op)
+{
+   switch(op) {
+        case RED:
+        r1 = 1.0f;
+        g1 = 0.0f;
+        b1 = 0.0f;
+        break;
+        case GREEN:
+        r1 = 0.0f;
+        g1 = 1.0f;
+        b1 = 0.0f;
+        break;
+        case BLUE:
+        r1 = 0.0f;
+        g1 = 0.0f;
+        b1 = 1.0f;
+        break;
+        case CYAN:
+        r1 = 0.0f;
+        g1 = 1.0f;
+        b1 = 1.0f;
+        break;
+        case MAGENTA:
+        r1 = 1.0f;
+        g1 = 0.0f;
+        b1 = 1.0f;
+        break;
+        case YELLOW:
+        r1 = 1.0f;
+        g1 = 1.0f;
+        b1 = 0.0f;
+        break;
+		case WHITE:
+		r1 = 1.0f;
+        g1 = 1.0f;
+        b1 = 1.0f;
+		break;
+        default:
+        r1 = 1.0f;
+        g1 = 1.0f;
+        b1 = 1.0f;
+        break;
+    }
+
+	// glutPostRedisplay();
+} 
+
+// Gerenciamento do menu com as opções de cores           
+void MenuCorLuz2(int op)
+{
+   switch(op) {
+        case RED:
+        r2 = 1.0f;
+        g2 = 0.0f;
+        b2 = 0.0f;
+        break;
+        case GREEN:
+        r2 = 0.0f;
+        g2 = 1.0f;
+        b2 = 0.0f;
+        break;
+        case BLUE:
+        r2 = 0.0f;
+        g2 = 0.0f;
+        b2 = 1.0f;
+        break;
+        case CYAN:
+        r2 = 0.0f;
+        g2 = 1.0f;
+        b2 = 1.0f;
+        break;
+        case MAGENTA:
+        r2 = 1.0f;
+        g2 = 0.0f;
+        b2 = 1.0f;
+        break;
+        case YELLOW:
+        r2 = 1.0f;
+        g2 = 1.0f;
+        b2 = 0.0f;
+        break;
+		case WHITE:
+		r2 = 1.0f;
+        g2 = 1.0f;
+        b2 = 1.0f;
+		break;
+        default:
+        r2 = 1.0f;
+        g2 = 1.0f;
+        b2 = 1.0f;
+        break;
+    }
+
+	// glutPostRedisplay();
+} 
+
+// Gerenciamento do menu principal           
+void MenuPrincipal(int op) {
+
+}
+
+// Função callback chamada para gerenciar eventos do mouse
+void GerenciaMouse(int button, int state, int x, int y)
+{
+	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN ) 
+	{
+        	mState = GLUT_LEFT_BUTTON;
+        	currentX = x;
+        	currentY = y;
+	}
+	// EspecificaParametrosVisualizacao();
+	// glutPostRedisplay();
+}
+
+void quaternion(char ch,int angle)
+{
+    float quaternionRotateMatrix[16]={ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+    
+    float vx = 0.0,vy = 0.0,vz = 0.0,qCOS,qSINx,qSINy,qSINz;
+	switch(ch)
+	{
+	    case 'x':   vx = 1.0;
+                    vy = 0.0;
+                    vz = 0.0;
+                    break;
+		case 'y':   vx = 0.0;
+                    vy = 1.0;
+                    vz = 0.0;
+                    break;
+		case 'z':   vx = 0.0;
+                    vy = 0.0;
+                    vz = 1.0;
+                    break;
+	}
+	float radAngle = M_PI * angle/180;
+    qCOS = cos(radAngle/2);
+	qSINx = sin(radAngle/2) * vx;
+	qSINy = sin(radAngle/2) * vy;
+	qSINz = sin(radAngle/2) * vz;
+
+	quaternionRotateMatrix[0] = 1.0f - 2.0f * qSINy * qSINy - 2.0f * qSINz * qSINz ;
+	quaternionRotateMatrix[4] = 2.0f * qSINx * qSINy - 2.0f * qCOS * qSINz;
+	quaternionRotateMatrix[8] = 2.0f * qSINx * qSINz + 2.0f * qCOS * qSINy;
+	quaternionRotateMatrix[12] = 0.0f;
+
+	quaternionRotateMatrix[1] = 2.0f * qSINx * qSINy + 2.0f * qCOS * qSINz;
+	quaternionRotateMatrix[5] = 1.0f - 2.0f * qSINx * qSINx - 2.0f * qSINz * qSINz;
+	quaternionRotateMatrix[9] = 2.0f * qSINy * qSINz - 2.0f * qCOS * qSINx;
+	quaternionRotateMatrix[13] = 0.0f;
+
+	quaternionRotateMatrix[2] = 2.0f * qSINx * qSINz - 2.0f * qCOS * qSINy;
+	quaternionRotateMatrix[6] = 2.0f * qSINy * qSINz + 2.0f * qCOS * qSINx;
+	quaternionRotateMatrix[10] = 1.0f - 2.0f * qSINx * qSINx - 2.0f * qSINy * qSINy;
+	quaternionRotateMatrix[14] = 0.0f;
+
+	quaternionRotateMatrix[3] = 0.0f;
+	quaternionRotateMatrix[7] = 0.0f;
+	quaternionRotateMatrix[11] = 0.0f;
+	quaternionRotateMatrix[15] = 1.0f;
+
+	glMultMatrixf(quaternionRotateMatrix);
+}
+
+void dragRotation(int xPos, int yPos) 
+{
+
+	trackBallRotate[0] -= ((yPos - currentY) * 180) / 100;
+	trackBallRotate[1] -= ((xPos - currentX) * 180) / 100;
+	for (int i = 0; i < 3; i ++)
+		if (trackBallRotate[i] > 360 || trackBallRotate[i] < -360)
+			trackBallRotate[i] = 0.0f;
+	currentX = xPos;
+	currentY = yPos;
+}
+
+void mouseMotion (int x, int y) 
+{
+    if (mState == GLUT_LEFT_BUTTON) 
+    {
+        dragRotation (x, y);
+        glutPostRedisplay();
+    }
+}
+
+// Inicializa parâmetros de rendering
+void Inicializa ()
+{   
+ 	// Especifica que a cor de fundo da janela ser� preta
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	// Habilita o modelo de colorização de Gouraud
+	glShadeModel(GL_SMOOTH);
+
+	// Define a refletância do material 
+	glMaterialfv(GL_FRONT,GL_SPECULAR, especularidade);
+	// Define a concentração do brilho
+	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
+
+	// Ativa o uso da luz ambiente 
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
+
+	// Define os parâmetros da luz de número 0
+	// glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente); 
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa );
+	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular );
+	glLightfv(GL_LIGHT0, GL_POSITION, posicaoLuz1 );
+
+	// Define os parâmetros da luz de número 0
+	// glLightfv(GL_LIGHT1, GL_AMBIENT, luzAmbiente); 
+	// glLightfv(GL_LIGHT1, GL_DIFFUSE, luzDifusa );
+	// glLightfv(GL_LIGHT1, GL_SPECULAR, luzEspecular );
+	// glLightfv(GL_LIGHT1, GL_POSITION, posicaoLuz2 );
+
+
+	// Habilita a definição da cor do material a partir da cor corrente
+	glEnable(GL_COLOR_MATERIAL)	;
+	//Habilita o uso de iluminação
+	glEnable(GL_LIGHTING);  
+	// Habilita a luz de número 0
+	glEnable(GL_LIGHT0);
+	
+	// Habilita a luz de número 1
+	// glEnable(GL_LIGHT1);
+	// Habilita o depth-buffering
+	glEnable(GL_DEPTH_TEST);
+
+    CriaMenu();
+}
+
+// Função usada para especificar o volume de visualiza��o
+void EspecificaParametrosVisualizacao(void)
+{
+	// Especifica sistema de coordenadas de projeção
+	glMatrixMode(GL_PROJECTION);
+	// Inicializa sistema de coordenadas de projeção
+	glLoadIdentity();
+
+	// Especifica a projeção perspectiva   
+	gluPerspective(angle,fAspect,Z_NEAR,Z_FAR);
+
+	// Especifica sistema de coordenadas do modelo
+	glMatrixMode(GL_MODELVIEW);
+	// Inicializa sistema de coordenadas do modelo
+	glLoadIdentity();
+
+	// Especifica posição do observador e do alvo    
+    gluLookAt(eyeX, eyeY, eyeZ, cX, cY, cZ, upX, upY, upZ);
 }
 
 // Função callback chamada para gerenciar eventos do teclado
@@ -445,180 +734,4 @@ void MenuCorObjeto(int op)
         break;
     }
 	glutPostRedisplay();
-}
-
-// Gerenciamento do menu com as opções de cores           
-void MenuCorLuz1(int op)
-{
-   switch(op) {
-        case RED:
-        r1 = 1.0f;
-        g1 = 0.0f;
-        b1 = 0.0f;
-        break;
-        case GREEN:
-        r1 = 0.0f;
-        g1 = 1.0f;
-        b1 = 0.0f;
-        break;
-        case BLUE:
-        r1 = 0.0f;
-        g1 = 0.0f;
-        b1 = 1.0f;
-        break;
-        case CYAN:
-        r1 = 0.0f;
-        g1 = 1.0f;
-        b1 = 1.0f;
-        break;
-        case MAGENTA:
-        r1 = 1.0f;
-        g1 = 0.0f;
-        b1 = 1.0f;
-        break;
-        case YELLOW:
-        r1 = 1.0f;
-        g1 = 1.0f;
-        b1 = 0.0f;
-        break;
-		case WHITE:
-		r1 = 1.0f;
-        g1 = 1.0f;
-        b1 = 1.0f;
-		break;
-        default:
-        r1 = 1.0f;
-        g1 = 1.0f;
-        b1 = 1.0f;
-        break;
-    }
-
-	// glutPostRedisplay();
-} 
-
-// Gerenciamento do menu com as opções de cores           
-void MenuCorLuz2(int op)
-{
-   switch(op) {
-        case RED:
-        r2 = 1.0f;
-        g2 = 0.0f;
-        b2 = 0.0f;
-        break;
-        case GREEN:
-        r2 = 0.0f;
-        g2 = 1.0f;
-        b2 = 0.0f;
-        break;
-        case BLUE:
-        r2 = 0.0f;
-        g2 = 0.0f;
-        b2 = 1.0f;
-        break;
-        case CYAN:
-        r2 = 0.0f;
-        g2 = 1.0f;
-        b2 = 1.0f;
-        break;
-        case MAGENTA:
-        r2 = 1.0f;
-        g2 = 0.0f;
-        b2 = 1.0f;
-        break;
-        case YELLOW:
-        r2 = 1.0f;
-        g2 = 1.0f;
-        b2 = 0.0f;
-        break;
-		case WHITE:
-		r2 = 1.0f;
-        g2 = 1.0f;
-        b2 = 1.0f;
-		break;
-        default:
-        r2 = 1.0f;
-        g2 = 1.0f;
-        b2 = 1.0f;
-        break;
-    }
-
-	// glutPostRedisplay();
-} 
-
-// Gerenciamento do menu principal           
-void MenuPrincipal(int op) {
-
-}
-
-// Função callback chamada para gerenciar eventos do mouse
-void GerenciaMouse(int button, int state, int x, int y)
-{
-	
-	// EspecificaParametrosVisualizacao();
-	// glutPostRedisplay();
-}
-
-// Inicializa parâmetros de rendering
-void Inicializa ()
-{   
- 	// Especifica que a cor de fundo da janela ser� preta
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	
-	// Habilita o modelo de colorização de Gouraud
-	glShadeModel(GL_SMOOTH);
-
-	// Define a refletância do material 
-	glMaterialfv(GL_FRONT,GL_SPECULAR, especularidade);
-	// Define a concentração do brilho
-	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
-
-	// Ativa o uso da luz ambiente 
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
-
-	// Define os parâmetros da luz de número 0
-	// glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente); 
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa );
-	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular );
-	glLightfv(GL_LIGHT0, GL_POSITION, posicaoLuz1 );
-
-	// Define os parâmetros da luz de número 0
-	// glLightfv(GL_LIGHT1, GL_AMBIENT, luzAmbiente); 
-	// glLightfv(GL_LIGHT1, GL_DIFFUSE, luzDifusa );
-	// glLightfv(GL_LIGHT1, GL_SPECULAR, luzEspecular );
-	// glLightfv(GL_LIGHT1, GL_POSITION, posicaoLuz2 );
-
-
-	// Habilita a definição da cor do material a partir da cor corrente
-	glEnable(GL_COLOR_MATERIAL)	;
-	//Habilita o uso de iluminação
-	glEnable(GL_LIGHTING);  
-	// Habilita a luz de número 0
-	glEnable(GL_LIGHT0);
-	
-	// Habilita a luz de número 1
-	// glEnable(GL_LIGHT1);
-	// Habilita o depth-buffering
-	glEnable(GL_DEPTH_TEST);
-
-    CriaMenu();
-}
-
-// Função usada para especificar o volume de visualiza��o
-void EspecificaParametrosVisualizacao(void)
-{
-	// Especifica sistema de coordenadas de projeção
-	glMatrixMode(GL_PROJECTION);
-	// Inicializa sistema de coordenadas de projeção
-	glLoadIdentity();
-
-	// Especifica a projeção perspectiva   
-	gluPerspective(angle,fAspect,Z_NEAR,Z_FAR);
-
-	// Especifica sistema de coordenadas do modelo
-	glMatrixMode(GL_MODELVIEW);
-	// Inicializa sistema de coordenadas do modelo
-	glLoadIdentity();
-
-	// Especifica posição do observador e do alvo    
-    gluLookAt(eyeX, eyeY, eyeZ, cX, cY, cZ, upX, upY, upZ);
 }
