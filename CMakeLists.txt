@@ -9,7 +9,7 @@ set(LIB_DIR lib)
 set(LIB_FILES ${LIB_DIR}/rply-1.1.4/rply.c)
 
 set(SRC_DIR src)
-set(SOURCE_FILES ${SRC_DIR}/montyplython.cpp)
+set(SOURCE_FILES ${SRC_DIR}/montyplython.cpp ${SRC_DIR}/glut_ply.cpp)
 
 # Configuração do OpenGL e GLUT
 find_package(OpenGL REQUIRED)
@@ -19,7 +19,7 @@ include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${LIB_DIR})
-# include_directories(${SRC_DIR})
+include_directories(${SRC_DIR})
 
 
 # Executável
