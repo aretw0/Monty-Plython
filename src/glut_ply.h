@@ -15,8 +15,9 @@
 #define MAGENTA 4
 #define YELLOW 5
 #define WHITE 6
+#define DEFAULT 7
 
-#define COLOROPTS 7
+#define COLOROPTS 8
 
 #define WIDTH 500
 #define HEIGHT 500
@@ -55,8 +56,10 @@ void CriaMenu();
         
 // Gerenciamento do menu principal           
 void MenuPrincipal(int op);
-
+// menu do estilo de display do objeto
+void MenuObjectStyle(int op);
 // Gerenciamento do menu com as opções de cores           
+void MenuCorObjeto(int op);
 void MenuCorLuz1(int op);
 void MenuCorLuz2(int op);
             

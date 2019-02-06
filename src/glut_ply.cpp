@@ -2,7 +2,8 @@
 
 #include "../lib/rply-1.1.4/rply.h"
 
-// Largura e altura da janela
+// Variáveis Globais
+
 GLfloat xMax = WIDTH/2;
 GLfloat yMax = HEIGHT/2;
 
@@ -11,8 +12,6 @@ GLfloat rightX = -xMax;
 GLfloat topY = -yMax;
 GLfloat bottomY = yMax;
 
-// GLfloat nearZ = 200;
-// GLfloat farZ = -1;
 GLfloat nearZ = 200.0f;
 GLfloat farZ = -1.0f;
 
@@ -20,22 +19,30 @@ GLfloat luzEspecular1[4]={0.3, 0.3, 0.3, 1.0};// "brilho"
 GLfloat luzEspecular2[4]={0.7, 0.7, 0.7, 1.0};// "brilho" 
 
 // Capacidade de brilho do material
-GLfloat especularidade[4]={1.0,1.0,1.0,1.0}; 
-GLint especMaterial = 60;
-
-// Variáveis de cor da luz
-GLfloat r1 = 1.0f, g1 = 1.0f, b1 = 1.0f;
-GLfloat r2 = 1.0f, g2 = 1.0f, b2 = 1.0f;
+GLfloat especularidade[4]={0.3,0.3,0.3,1.0}; 
+GLint especMaterial = 30;
+// estilo do objeto
+GLenum style = GL_POLYGON;
+// Variáveis de cor
+GLfloat r =  0.75, g = 0.75, b = 1;
+GLfloat r2 = 1, g2 = 1, b2 = 1;
+GLfloat r1 = 1, g1 = 1, b1 = 1;
 
 // variáveis de posição da luz
 GLfloat xl1 = 0.7;
 GLfloat yl1 = 0.5;
 GLfloat zl1 = 0.3;
-// GLfloat lightPos0[] = { 1.5f, 2.5f, 0.0f, 1.0f};
+
 GLfloat xl2 = -0.7;
 GLfloat yl2 = 0.5;
 GLfloat zl2 = 0.6;
-// GLfloat lightPos1[] = { -0.6, -0.6, -(farZ + 0.111), 0.0f};
+
+GLfloat lightColor0[] = {r1, g1, b1, 1.0};
+GLfloat lightPos0[] = { xl1, yl1, zl1, 1.0};
+
+GLfloat lightColor1[] = { r2, g2, b2, 1.0};
+GLfloat lightPos1[] = { xl2, yl2, zl2, 1.0};
+
 // tela
 GLint view_w, view_h;
 
@@ -63,6 +70,7 @@ ReadPly * normals;		// Stores Normal of Each Face
 
 long nvertices, ntriangles;
 
+// objeto da biblioteca rply para manipulação do arquivo
 p_ply ply;
  
 ReadPly::ReadPly(){};
@@ -167,7 +175,7 @@ void Desenha(void)
         doAnimate();
 		glTranslatef( 0, -0.1, 0);
         // Desenha o ply se tiver pronto ou o teapot
-		glColor3f( 0.75, 0.75, 1.0);
+		glColor3f( r, g, b);
 		if (plyReady) {
 			drawPly();
 		} else {
@@ -187,19 +195,7 @@ void lightning() {
 		glVertex3f(xl1, yl1, zl1);
 		glColor3f(r2, g2, b2);
 		glVertex3f(xl2, yl2, zl2);
-	glEnd();
-
-	GLfloat lightColor0[] = {r1, g1, b1, 1.0};
-	GLfloat lightPos0[] = { xl1, yl1, zl1, 1.0};
-
-	GLfloat lightColor1[] = { r2, g2, b2, 1.0};
-	GLfloat lightPos1[] = { xl2, yl2, zl2, 1.0};
-
-	glLightfv( GL_LIGHT0, GL_DIFFUSE, lightColor0);
-	glLightfv( GL_LIGHT0, GL_POSITION, lightPos0);	
-
-	glLightfv( GL_LIGHT1, GL_DIFFUSE, lightColor1);
-	glLightfv( GL_LIGHT1, GL_POSITION, lightPos1);	
+	glEnd();	
 }
 
 // Inicializa parâmetros de rendering
@@ -231,6 +227,12 @@ void Inicializa ()
 
 	glLightfv(GL_LIGHT1, GL_SPECULAR, luzEspecular2 );
 
+	glLightfv( GL_LIGHT0, GL_DIFFUSE, lightColor0);
+	glLightfv( GL_LIGHT0, GL_POSITION, lightPos0);	
+
+	glLightfv( GL_LIGHT1, GL_DIFFUSE, lightColor1);
+	glLightfv( GL_LIGHT1, GL_POSITION, lightPos1);
+
 	// Habilita a definição da cor do material a partir da cor corrente
 	// glEnable(GL_COLOR_MATERIAL);
 
@@ -243,7 +245,7 @@ void drawPly() {
 	glPushMatrix();
 	for( n =0; n < ntriangles; n++)
 	{
-		glBegin(GL_POLYGON);
+		glBegin(style);		
 			glNormal3f( normals[n].getter(0),normals[n].getter(1), normals[n].getter(2) );
 			int face_no = faces[n].getter(0);
 			glVertex3f( vertices[face_no].getter(0), vertices[face_no].getter(1), vertices[face_no].getter(2)); 
@@ -293,7 +295,6 @@ void doAnimate()
     quaternion( 'x',trackBallRotate[0]) ;
     quaternion( 'y',trackBallRotate[1]) ;
     glTranslatef(xT, yT, zT);
-    // glRotatef(aR,1,1,1);
     glRotatef(aXR,1,0,0);
     glRotatef(aYR,0,1,0);
     glRotatef(aZR,0,0,1);
@@ -303,16 +304,11 @@ void doAnimate()
 // Função callback chamada quando o tamanho da janela é alterado 
 void AlteraTamanhoJanela(GLsizei w, GLsizei h)
 {
-    // cout << "(" << w << "," << h << ")" << endl;
      // Para previnir uma divisão por zero
 	if ( h == 0 ) h = 1;
 
 	// Especifica o tamanho da viewport
     glViewport(0, 0, w, h);
-    
- 
-	// Calcula a correção de aspecto
-	// fAspect = (GLfloat)w/(GLfloat)h;
 
     xMax = (w/40);
     yMax = (h/40);
@@ -323,6 +319,67 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h)
 	bottomY = yMax;
 
     glutPostRedisplay();
+}
+
+void MenuObjectStyle(int op) {
+	switch (op)
+	{
+		case 0:
+			style = GL_POLYGON;			
+			break;
+		case 1:
+			style = GL_LINE_STRIP;			
+			break;
+		case 2:
+			style = GL_TRIANGLES;			
+			break;
+	}
+	glutPostRedisplay();		
+}
+
+void MenuCorObjeto(int op)
+{
+	switch(op) {
+        case RED:
+        r = 1.0f;
+        g = 0.0f;
+        b = 0.0f;
+        break;
+        case GREEN:
+        r = 0.0f;
+        g = 1.0f;
+        b = 0.0f;
+        break;
+        case BLUE:
+        r = 0.0f;
+        g = 0.0f;
+        b = 1.0f;
+        break;
+        case CYAN:
+        r = 0.0f;
+        g = 1.0f;
+        b = 1.0f;
+        break;
+        case MAGENTA:
+        r = 1.0f;
+        g = 0.0f;
+        b = 1.0f;
+        break;
+        case YELLOW:
+        r = 1.0f;
+        g = 1.0f;
+        b = 0.0f;
+        break;
+		case WHITE:
+		r = 1, g = 1, b = 1;
+		break;
+        default:
+        r = 0.75, g = 0.75, b = 1;
+        break;
+    }
+
+	glutPostRedisplay();
+	
 }
 
 // Gerenciamento do menu com as opções de cores           
@@ -365,11 +422,17 @@ void MenuCorLuz1(int op)
         b1 = 1.0f;
 		break;
         default:
-        r1 = 1.0f;
-        g1 = 1.0f;
+        r1 = 0.75f;
+        g1 = 0.75f;
         b1 = 1.0f;
         break;
     }
+
+	lightColor0[0] = r1;
+	lightColor0[1] = g1;
+	lightColor0[2] = b1;
+
+	glLightfv( GL_LIGHT0, GL_DIFFUSE, lightColor0);
 
 	glutPostRedisplay();
 } 
@@ -414,11 +477,17 @@ void MenuCorLuz2(int op)
         b2 = 1.0f;
 		break;
         default:
-        r2 = 1.0f;
-        g2 = 1.0f;
+        r2 = 0.75f;
+        g2 = 0.75f;
         b2 = 1.0f;
         break;
     }
+
+	lightColor1[0] = r2;
+	lightColor1[1] = g2;
+	lightColor1[2] = b2;
+
+	glLightfv( GL_LIGHT1, GL_DIFFUSE, lightColor1);
 
 	glutPostRedisplay();
 } 
@@ -695,6 +764,16 @@ void GerenciaTeclado(unsigned char key, int x, int y)
             cout << "zS: " << zS << endl;
         break;
     };
+
+	lightPos0[0] = xl1;
+	lightPos0[1] = yl1;
+	lightPos0[2] = zl1;
+
+	lightPos1[0] = xl2;
+	lightPos1[1] = yl2;
+	lightPos1[2] = zl2;
+	glLightfv( GL_LIGHT0, GL_POSITION, lightPos0);	
+	glLightfv( GL_LIGHT1, GL_POSITION, lightPos1);
 	glutPostRedisplay();    
 }
 
@@ -702,7 +781,7 @@ void GerenciaTeclado(unsigned char key, int x, int y)
 void CriaMenu() 
 {
    
-    int menu,submenu1, submenu2;
+    int menu,submenu1, submenu2, submenu3, submenu4;
 
 	submenu1 = glutCreateMenu(MenuCorLuz1);
 	glutAddMenuEntry("Vermelho",RED);
@@ -712,6 +791,7 @@ void CriaMenu()
 	glutAddMenuEntry("Magenta",MAGENTA);
 	glutAddMenuEntry("Amarelo",YELLOW);
 	glutAddMenuEntry("Branco",WHITE);
+	glutAddMenuEntry("DEFAULT",DEFAULT);
 
     submenu2 = glutCreateMenu(MenuCorLuz2);
 	glutAddMenuEntry("Vermelho",RED);
@@ -720,11 +800,29 @@ void CriaMenu()
 	glutAddMenuEntry("Ciano",CYAN);
 	glutAddMenuEntry("Magenta",MAGENTA);
 	glutAddMenuEntry("Amarelo",YELLOW);
-	glutAddMenuEntry("Branco",WHITE);     
+	glutAddMenuEntry("Branco",WHITE);
+	glutAddMenuEntry("DEFAULT",DEFAULT); 
+
+	submenu3 = glutCreateMenu(MenuCorObjeto);
+	glutAddMenuEntry("Vermelho",RED);
+	glutAddMenuEntry("Verde",GREEN);
+	glutAddMenuEntry("Azul",BLUE);
+	glutAddMenuEntry("Ciano",CYAN);
+	glutAddMenuEntry("Magenta",MAGENTA);
+	glutAddMenuEntry("Amarelo",YELLOW);
+	glutAddMenuEntry("Branco",WHITE);
+	glutAddMenuEntry("DEFAULT",DEFAULT);     
+
+	submenu4 = glutCreateMenu(MenuObjectStyle);
+	glutAddMenuEntry("Polygon",0);
+	glutAddMenuEntry("Line Strip",1);
+	glutAddMenuEntry("Triangles",2);
 
     menu = glutCreateMenu(MenuPrincipal);
-    glutAddSubMenu("Cor Luz 1",submenu1);
+    glutAddSubMenu("Cor Luz 1",submenu1); 
     glutAddSubMenu("Cor Luz 2",submenu2);
+    glutAddSubMenu("Cor Objeto",submenu3);
+    glutAddSubMenu("Estilo Objeto",submenu4);
     
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
