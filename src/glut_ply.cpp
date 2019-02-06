@@ -619,20 +619,20 @@ void GerenciaTeclado(unsigned char key, int x, int y)
 
 		case 'i': 
 		case 'I': 
-			xS += 0.1;
+			xS += 0.01;
             cout  << "xS: " << xS << endl;
-            yS += 0.1;
+            yS += 0.01;
             cout << "yS: " << yS << endl;
-            zS += 0.1;
+            zS += 0.01;
             cout << "zS: " << zS << endl;
 			break;
 		case 'o': 
 		case 'O': 
-			xS -= 0.1;
+			xS -= 0.01;
             cout  << "xS: " << xS << endl;
-            yS -= 0.1;
+            yS -= 0.01;
             cout  << "yS: " << yS << endl;
-            zS -= 0.1;
+            zS -= 0.01;
             cout << "zS: " << zS << endl;
 			break;
 
