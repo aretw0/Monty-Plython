@@ -31,43 +31,43 @@ Isso plotará o objeto 3d e duas luzes (1ª direita e 2ª esquerda).
 
 Os controles são:
 
-    - Esc: Sair da tela cheia. (Começa em tela cheia)
-    - Enter: Tela cheia.
-    - r ou R: reseta valores.
-    - i ou I: zoom in.
-    - o ou O: zoom out.
-    - q: Decrementa eixo X da luz 1.
-    - Q: Incrementa eixo X da luz 1.
-    - w: Decrementa eixo Y da luz 1.
-    - W: Incrementa eixo Y da luz 1.
-    - e: Decrementa eixo Z da luz 1.
-    - E: Incrementa eixo Z da luz 1.
-    - a: Decrementa eixo X da luz 2.
-    - A: Incrementa eixo X da luz 2.
-    - s: Decrementa eixo Y da luz 2.
-    - S: Incrementa eixo Y da luz 2.
-    - d: Decrementa eixo Z da luz 2.
-    - D: Incrementa eixo Z da luz 2.
-    - t: Decrementa eixo X da translação.
-    - T: Incrementa eixo X da translação.
-    - y: Decrementa eixo Y da translação.
-    - Y: Incrementa eixo Y da translação.
-    - u: Decrementa eixo Z da translação.
-    - U: Incrementa eixo Z da translação.
-    - g: Decrementa eixo X da rotação.
-    - G: Incrementa eixo X da rotação.
-    - h: Decrementa eixo Y da rotação.
-    - H: Incrementa eixo Y da rotação.
-    - j: Decrementa eixo Z da rotação.
-    - J: Incrementa eixo Z da rotação.
-    - b: Decrementa eixo X da escala.
-    - B: Incrementa eixo X da escala.
-    - n: Decrementa eixo Y da escala.
-    - N: Incrementa eixo Y da escala.
-    - m: Decrementa eixo Z da escala.
-    - M: Incrementa eixo Z da escala.
-    - Clicar com botão esquerdo do mouse e arrastar move a imagem em seu eixo.
-    - Clicar com botão direito do mouse abre menu com opções.
+- Esc: Sair da tela cheia. (Começa em tela cheia)
+- Enter: Tela cheia.
+- r ou R: reseta valores.
+- i ou I: zoom in.
+- o ou O: zoom out.
+- q: Decrementa eixo X da luz 1.
+- Q: Incrementa eixo X da luz 1.
+- w: Decrementa eixo Y da luz 1.
+- W: Incrementa eixo Y da luz 1.
+- e: Decrementa eixo Z da luz 1.
+- E: Incrementa eixo Z da luz 1.
+- a: Decrementa eixo X da luz 2.
+- A: Incrementa eixo X da luz 2.
+- s: Decrementa eixo Y da luz 2.
+- S: Incrementa eixo Y da luz 2.
+- d: Decrementa eixo Z da luz 2.
+- D: Incrementa eixo Z da luz 2.
+- t: Decrementa eixo X da translação.
+- T: Incrementa eixo X da translação.
+- y: Decrementa eixo Y da translação.
+- Y: Incrementa eixo Y da translação.
+- u: Decrementa eixo Z da translação.
+- U: Incrementa eixo Z da translação.
+- g: Decrementa eixo X da rotação.
+- G: Incrementa eixo X da rotação.
+- h: Decrementa eixo Y da rotação.
+- H: Incrementa eixo Y da rotação.
+- j: Decrementa eixo Z da rotação.
+- J: Incrementa eixo Z da rotação.
+- b: Decrementa eixo X da escala.
+- B: Incrementa eixo X da escala.
+- n: Decrementa eixo Y da escala.
+- N: Incrementa eixo Y da escala.
+- m: Decrementa eixo Z da escala.
+- M: Incrementa eixo Z da escala.
+- Clicar com botão esquerdo do mouse e arrastar move a imagem em seu eixo.
+- Clicar com botão direito do mouse abre menu com opções.
 
 
 ### Referências
