@@ -27,7 +27,6 @@
 *.out
 *.app
 
-Release/*
-Debug/*
+Build/*
 bin/*
 data
