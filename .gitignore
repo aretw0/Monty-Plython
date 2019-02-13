@@ -28,5 +28,4 @@
 *.app
 
 Build/*
-bin/*
 data
