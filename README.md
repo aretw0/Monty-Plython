@@ -23,7 +23,7 @@ Execute as tarefas nessa ordem:
 
 Esta ultima deve gerar o arquivo **MontyPlython** na pasta [Build](https://github.com/aretw0/Monty-Plython/tree/master/Build) e logo você poderá executar-lo com           
         
-    ./bin/Htmlex some.ply
+    ./Build/MontyPlython some.ply
 
 >Isso mesmo, só funciona em sistemas operacionais linux.
 
