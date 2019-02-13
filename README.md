@@ -21,7 +21,7 @@ Execute as tarefas nessa ordem:
 1. cmake
 2. make
 
-Esta ultima deve gerar o arquivo **MontyPlython** na pasta [Build](https://github.com/aretw0/Monty-Plython/tree/master/Build) e logo você poderá executar-lo com           
+Esta ultima deve gerar o arquivo **MontyPlython** na pasta *Build* (crie se ela não existir) e logo você poderá executar-lo com           
         
     ./Build/MontyPlython some.ply
 
