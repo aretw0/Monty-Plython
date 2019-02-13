@@ -4,24 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build M_Ply",
-            "type": "shell",
-            "command": "g++",
-            "args": [
-                "-g", "./src/*.cpp", "-o" ,"./bin/MontyPlython", "-lGl", "lGLU", "-lglut"
-            ],
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": true,
-                "panel": "new",
-                "showReuseMessage": true
-            }
-        },
-        {
-            "label": "make debug",
+            "label": "make",
             "type": "shell",
             "command": "make",
             "args": [],
@@ -30,37 +13,12 @@
                 "isDefault": true
             },
             "options" : {
-                "cwd" : "${workspaceFolder}/Debug"
+                "cwd" : "${workspaceFolder}/Build"
             },
             "problemMatcher": ["$gcc"]
         },
         {
-            "label": "make release",
-            "type": "shell",
-            "command": "make",
-            "args": [],
-            "group": "build",
-            "options" : {
-                "cwd" : "${workspaceFolder}/Release"
-            },
-            "problemMatcher": ["$gcc"]
-        },
-        {
-            "label": "cmake debug",
-            "type": "shell",
-            "command": "cmake",
-            "args": [
-                "-DCMAKE_BUILD_TYPE=Debug",
-                "../"
-            ],
-            "group": "build",
-            "options" : {
-                "cwd" : "${workspaceFolder}/Debug"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "cmake release",
+            "label": "cmake",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -69,7 +27,7 @@
             ],
             "group": "build",
             "options" : {
-                "cwd" : "${workspaceFolder}/Release"
+                "cwd" : "${workspaceFolder}/Build"
             },
             "problemMatcher": []
         }

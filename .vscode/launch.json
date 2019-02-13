@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Debug M_Ply",
+            "name": "Launch M_Ply",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Debug/MontyPlython",
+            "program": "${workspaceFolder}/Build/MontyPlython",
             "args": [
-                "${workspaceFolder}/data/bun_zipper.ply"
+                "${workspaceFolder}/data/novo/bethoven.ply"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -24,29 +24,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "make debug"
-        },
-        {
-            "name": "Launch Release M_Ply",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/Release/MontyPlython",
-            "args": [
-                "${workspaceFolder}/data/bun_zipper.ply"
-            ],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "make release"
+            "preLaunchTask": "make"
         }
     ]
 }
